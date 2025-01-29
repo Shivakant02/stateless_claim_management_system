@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { createPolicyHolder } from "../controllers/policyHolder.controller.js";
+import {
+  createPolicyHolder,
+  getPolicyHolder,
+} from "../controllers/policyHolder.controller.js";
 
 const router = Router();
 
 router.post("/createPolicyHolder", createPolicyHolder);
+router.get("/getPolicyHolder/:id", getPolicyHolder);
 
 export default router;
