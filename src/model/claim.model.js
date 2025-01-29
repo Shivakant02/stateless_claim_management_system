@@ -1,13 +1,14 @@
-class Claim {
-  constructor(id, name, description, status, date, userId) {
-    this.id = id;
-    this.name = name;
-    this.description = description;
-    this.status = status;
-    this.amount = amount;
-    this.date = date;
-    this.userId = userId;
+export class Claim {
+  constructor(req) {
+    this.id = Math.floor(Math.random() * 1000000);
+    this.user_id = req.body.user_id;
+    this.policyNumber = req.body.policyNumber;
+    this.dateOfLoss = req.body.dateOfLoss;
+    this.lossDescription = req.body.lossDescription;
+    this.lossAmount = req.body.lossAmount;
+    this.status = "Submitted";
+    this.timeStamps = new Date().toISOString();
   }
 }
 
-export default Claim;
+export const claim_db = {};
