@@ -12,6 +12,13 @@ export const submitClaim = (req, res) => {
     ) {
       return res.status(400).send({ message: "All fields are required" });
     }
+
+    if (req.body.lossAmount > 1000000) {
+      return res
+        .status(400)
+        .send({ message: "claimed amount is more than tha coverage amount " });
+    }
+
     const claim = new Claim(req);
     claim_db[claim.id] = claim;
     console.log(claim_db[claim.id]);
