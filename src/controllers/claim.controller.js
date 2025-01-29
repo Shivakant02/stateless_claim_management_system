@@ -41,6 +41,6 @@ export const getClaim = (req, res) => {
       claim: claim_db[req.params.id],
     });
   } catch (error) {
-    res.status(500).send({ message: error.message });
+    return res.status(500).send({ message: error.message });
   }
 };
