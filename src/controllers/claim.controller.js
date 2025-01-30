@@ -101,3 +101,23 @@ export const deleteClaim = (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+//function to get claim status
+export const getClaimStatus = (req, res) => {
+  const { id } = req.params;
+  try {
+    if (!id) {
+      return res.status(400).send({ message: "claim id required" });
+    }
+    if (!claim_db[id]) {
+      return res.status(404).send({ message: "Claim not found" });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Claim status retrieved successfully",
+      status: claim_db[id].status,
+    });
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};

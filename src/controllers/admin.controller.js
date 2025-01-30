@@ -41,3 +41,16 @@ export const rejectClaim = (req, res) => {
     return res.status(500).send({ message: error.message });
   }
 };
+
+//function to get all claim records
+export const getAllClaimRecords = (req, res) => {
+  try {
+    return res.status(200).json({
+      success: true,
+      message: "Claim records retrieved successfully",
+      claimRecords: claim_records_db,
+    });
+  } catch (error) {
+    return res.status(500).send({ message: error.message });
+  }
+};
