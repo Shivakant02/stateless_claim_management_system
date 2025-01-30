@@ -6,6 +6,7 @@ export class PolicyHolder {
     this.email = req.body.email;
     this.phone_no = req.body.phone_no;
     this.address = req.body.address;
+    this.bankId = req.body.bankId;
     this.city = req.body.city;
     this.state = req.body.state;
     this.pincode = req.body.pincode;
