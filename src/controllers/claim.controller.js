@@ -18,11 +18,6 @@ export const submitClaim = (req, res) => {
         .status(400)
         .send({ message: "claimed amount is more than tha coverage amount " });
     }
-
-    if(req.body.policyNumber===claim_db[req.body.policyNumber].policyNumber){
-      return res.status(409).send({ message: "Claim already exists" });
-    }
-
     const claim = new Claim(req);
     claim_db[claim.policyNumber] = claim;
     console.log(claim_db[claim.policyNumber]);
