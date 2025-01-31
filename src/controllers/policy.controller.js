@@ -1,41 +1,41 @@
-import { Policy, policy_db } from "../model/policy.model.js";
-export const createPolicy = (req, res) => {
+import Policy from "../model/policy.model.js";
+import User from "../model/user.model.js";
+
+//perchase policy function
+export const purchasePolicy = async(req, res,next) => {
   try {
-    const {
-      user_id,
-      policyNumber,
-      type,
-      start_date,
-      valid_till,
-      coverage,
-      premium,
-    } = req.body;
-    // console.log(req.body);
 
-    if (!user_id) {
-      return res.status(404).send({ message: "Please login to buy a policy" });
+    const {type,coverage,premium,policyHolder} = req.body;
+    if (!type || !coverage || !premium || !policyHolder) {
+      return next(new AppError("Please provide all required fields", 400));
     }
 
-    if (
-      !policyNumber ||
-      !type ||
-      !start_date ||
-      !valid_till ||
-      !coverage ||
-      !premium
-    ) {
-      return res.status(400).send({ message: "all fields are required" });
-    }
-    const policy = new Policy(req);
+    const user=await User.findById(policyHolder);
+    console.log(user);
 
-    policy_db[policy.id] = policy;
-    console.log(policy_db[policy.id]);
+    if(!user.login===true){
+      return next(new AppError("Please login to continue", 400));
+    }
+    
+    const policy = await Policy.create({
+      type:type,
+      coverage:coverage,
+      premium:premium,
+      policyHolder:user._id
+    });
+
+    user.policies.push(policy._id);
+    // await policy.save();
+    await user.save();
+
+
+    
     return res.status(201).json({
       message: true,
-      message: "policy created successfully",
+      message: "policy purchased successfully",
       policy,
     });
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return next(new AppError(error.message, 500));
   }
 };

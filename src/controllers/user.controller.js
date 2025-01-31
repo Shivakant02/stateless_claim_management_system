@@ -42,7 +42,7 @@ export const signin = async (req, res,next) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
-    console.log(user)
+    // console.log(user)
     if (!user || !(await user.comparePassword(password))) {
       return next(new AppError("Invalid credentials", 401));
     }

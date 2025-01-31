@@ -48,7 +48,13 @@ const UserSchema = new Schema(
     login:{
       type: Boolean,
       default: false
-    }
+    },
+    policies: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Policy",
+      },
+    ],
   },
   {
     timestamps: true,

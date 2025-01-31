@@ -1,8 +1,8 @@
 import { Router } from "express";
-import { createPolicy } from "../controllers/policy.controller.js";
+import { purchasePolicy } from "../controllers/policy.controller.js";
 
 const router = Router();
 
-router.post("/createPolicy", createPolicy);
+router.post("/purchasePolicy", purchasePolicy);
 
 export default router;
