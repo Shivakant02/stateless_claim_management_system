@@ -1,7 +1,7 @@
 export class ClaimRecords {
   constructor(claim) {
     this.id = Math.floor(Math.random() * 100000) + 1;
-    this.claimNumber = claim.claimNumber;
+    this.policyNumber = claim.policyNumber;
     this.claimId = claim.Id;
     this.policyHolderId = claim.user_id;
     this.dateOfLoss = claim.dateOfLoss;
