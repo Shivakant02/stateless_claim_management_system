@@ -1,3 +1,4 @@
+import bcryptjs from "bcryptjs";
 import { model, Schema } from "mongoose";
 
 const UserSchema = new Schema(
@@ -31,6 +32,12 @@ const UserSchema = new Schema(
       enum: ["user", "admin"],
       default: "user",
     },
+    dateOfBirth: {
+      type: Date,
+        },
+    phoneNumber: {
+      type: String,
+    },
     address: {
       type: String,
       trim: true,
@@ -38,11 +45,31 @@ const UserSchema = new Schema(
     avatar: {
       type: String,
     },
+    login:{
+      type: Boolean,
+      default: false
+    }
   },
   {
     timestamps: true,
   }
 );
 
+// to hash the password before saving
+UserSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return next();
+  }
+ 
+  this.password = await bcryptjs.hashSync(this.password, 10);
+});
+
+UserSchema.methods={
+  comparePassword:async function(enteredPassword){
+    return await bcryptjs.compare(enteredPassword,this.password)
+  }
+}
+
 const User = model("User", UserSchema);
 export default User;
+
