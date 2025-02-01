@@ -1,6 +1,12 @@
 import User from "../model/user.model.js";
 import AppError from "../utils/AppError.js";
 
+//cookie options
+const cookieOptions = {
+  expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+  httpOnly: true,
+};
+
 //signup funtion
 export const signup = async (req, res,next) => {
   try {
@@ -21,8 +27,13 @@ export const signup = async (req, res,next) => {
     });
 
     await user.save();
+
+    const token = await user.generateJWTToken();
+
     user.password = undefined;
 
+    res.cookie("token", token, cookieOptions);
+    
     return res.status(201).json({
       success: true,
       message: "User registered successfully",
@@ -47,10 +58,12 @@ export const signin = async (req, res,next) => {
       return next(new AppError("Invalid credentials", 401));
     }
 
-    user.login = true;
+    // user.login = true;
     await user.save();
-
+    const token = await user.generateJWTToken();    
     user.password = undefined;
+
+    res.cookie("token", token, cookieOptions);
 
     return res.status(200).json({
       success: true,

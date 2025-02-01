@@ -1,5 +1,8 @@
 import bcryptjs from "bcryptjs";
 import { model, Schema } from "mongoose";
+import jwt from "jsonwebtoken";
+import { config } from "dotenv";
+config();
 
 const UserSchema = new Schema(
   {
@@ -45,10 +48,6 @@ const UserSchema = new Schema(
     avatar: {
       type: String,
     },
-    login:{
-      type: Boolean,
-      default: false
-    },
     policies: [
       {
         type: Schema.Types.ObjectId,
@@ -73,7 +72,16 @@ UserSchema.pre("save", async function (next) {
 UserSchema.methods={
   comparePassword:async function(enteredPassword){
     return await bcryptjs.compare(enteredPassword,this.password)
-  }
+  },
+  generateJWTToken: async function () {
+    return await jwt.sign(
+      {
+        id: this._id,
+        email: this.email,
+      },
+      process.env.JWT_SECRET_KEY
+    )
+}
 }
 
 const User = model("User", UserSchema);
