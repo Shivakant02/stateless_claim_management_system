@@ -28,8 +28,8 @@ const PolicySchema=new mongoose.Schema({
       default:"active",
     },
     policyHolder:{
-      type:String,
-      required:[true,"Please provide a policy holder"],
+      type:mongoose.Schema.Types.ObjectId,
+      ref:"User",
     }
   },{
   timestamps:true,
