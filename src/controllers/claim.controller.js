@@ -21,8 +21,8 @@ try {
   if(!policy){
     return next(new AppError("Policy not found", 404));
   }
-
-if(policy.policyHolder!==userId){
+    
+if(policy.policyHolder.toString()!==userId){
   return next(new AppError("You are not authorized to submit claim for this policy", 401));
 }
 
@@ -52,3 +52,33 @@ console.log(policy);
   return next(new AppError(error.message, 500));
 }
 } 
+
+// get a claim
+export const getClaim = async (req, res,next) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    const claimId = req.params.id;
+    const claim = await Claim.findById(claimId);
+    if (!claim) {
+      return next(new AppError("Claim not found", 404));
+    }
+
+    if (claim.policyHolder.toString()!== userId) {
+      return next(new AppError("You are not authorized to view this claim", 401));
+    }
+
+    return res.status(200).json({
+      success: true,
+      claim,
+    });
+    
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+    
+  }
+}
