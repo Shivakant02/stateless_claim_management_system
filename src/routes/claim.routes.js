@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getClaim, submitClaim,} from "../controllers/claim.controller.js";
+import {deleteClaim, getClaim, submitClaim, updateClaim,} from "../controllers/claim.controller.js";
 import { verifyToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
@@ -9,6 +9,8 @@ router.post("/submitClaim/:id",verifyToken, submitClaim);
 
 router
 .route("/:id")
-.get(verifyToken, getClaim);
+.get(verifyToken, getClaim)
+.put(verifyToken, updateClaim)
+.delete(verifyToken, deleteClaim);
 
 export default router;
