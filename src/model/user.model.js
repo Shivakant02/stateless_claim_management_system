@@ -54,6 +54,12 @@ const UserSchema = new Schema(
         ref: "Policy",
       },
     ],
+    claims:[
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Claim",
+      },
+    ],
   },
   {
     timestamps: true,

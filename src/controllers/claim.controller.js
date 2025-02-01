@@ -38,6 +38,9 @@ console.log(policy);
     claimReason:claimReason,
     policyHolder:user._id
   });
+
+  user.claims.push(claim._id);
+  await user.save();
  
   return res.status(201).json({
     success: true,
