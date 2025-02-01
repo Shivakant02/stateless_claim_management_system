@@ -75,3 +75,24 @@ export const signin = async (req, res,next) => {
   }
 };
 
+//get user profile
+export const getUserProfile = async (req, res,next) => {
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+    if (!user) {
+      return next(new AppError("User not found", 400));
+    }
+
+    user.password = undefined;
+    return res.status(200).json({
+      success: true,
+      user,
+    });
+    
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+    
+  }
+}
+  
