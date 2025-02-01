@@ -1,14 +1,31 @@
-export class Claim {
-  constructor(req) {
-    this.id = Math.floor(Math.random() * 1000000);
-    this.user_id = req.body.user_id;
-    this.policyNumber = req.body.policyNumber;
-    this.dateOfLoss = req.body.dateOfLoss;
-    this.lossDescription = req.body.lossDescription;
-    this.lossAmount = req.body.lossAmount;
-    this.status = "Submitted";
-    this.timeStamps = new Date().toISOString();
-  }
-}
+import { model, Schema } from "mongoose";
 
-export const claim_db = {};
+const ClaimSchema=new Schema({
+  policyId:{
+    type:Schema.Types.ObjectId,
+    ref:"Policy",
+    required:[true,"Please provide a policy id"],
+  },
+  claimAmount:{
+    type:Number,
+    required:[true,"Please provide a claim amount"],
+  },
+  claimReason:{
+    type:String,
+    required:[true,"Please provide a claim reason"],
+  },
+  status:{
+    type:String,
+    enum:["pending","approved","rejected"],
+    default:"pending",
+  },
+  policyHolder:{
+    type:Schema.Types.ObjectId,
+    ref:"User",
+  }
+},{
+  timestamps:true,
+});
+
+const Claim=model("Claim",ClaimSchema);
+export default Claim;
