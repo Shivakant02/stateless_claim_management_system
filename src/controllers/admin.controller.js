@@ -1,43 +1,31 @@
-import { claim_db } from "../model/claim.model.js";
-import { ClaimRecords, claim_records_db } from "../model/claimRecords.model.js";
+import Claim from '../model/claim.model.js';
+import AppError from '../utils/AppError.js';
 
-//function to approve a claim
-export const approveClaim = (req, res) => {
-  const { id } = req.params;
-
+export const approveClaim = async (req, res,next) => {
   try {
-    if (!claim_db[id]) {
-      return res.status(404).send({ message: "Claim not found" });
+    const userId=req.user.id;
+    if(!userId){
+      return next(new AppError("Unauthorized,please login to continue",401));
     }
-    claim_db[id].status = "approved";
-    const claimRecord = new ClaimRecords(claim_db[id]);
-    claim_records_db[claimRecord.id] = claimRecord;
-    return res.status(200).json({
-      success: true,
-      message: "Claim approved successfully",
-      claim: claim_records_db[claimRecord.id],
-    });
-  } catch (error) {
-    return res.status(500).send({ message: error.message });
-  }
-};
 
-//function to reject a claim
-export const rejectClaim = (req, res) => {
-  const { id } = req.params;
-  try {
-    if (!claim_db[id]) {
-      return res.status(404).send({ message: "Claim not found" });
+    const claimId=req.params.id
+    const claim=await Claim.findById(claimId);
+    if(!claim){
+      return next(new AppError("Claim not found",400));
     }
-    claim_db[id].status = "rejected";
-    const claimRecord = new ClaimRecords(claim_db[id]);
-    claim_records_db[claimRecord.id] = claimRecord;
+
+    
+    claim.status="approved";
+    await claim.save();
+
     return res.status(200).json({
-      success: true,
-      message: "Claim rejected",
-      claim: claim_records_db[claimRecord.id],
+      message:"Claim approved successfully",
+      claim
     });
+
+    
   } catch (error) {
-    return res.status(500).send({ message: error.message });
+    return next(new AppError(error.message, 500));
+    
   }
-};
+}

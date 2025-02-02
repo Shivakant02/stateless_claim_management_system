@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { approveClaim, rejectClaim } from "../controllers/admin.controller.js";
+import { approveClaim } from "../controllers/admin.controller.js";
+import { verifyRole, verifyToken } from "../middleware/auth.middleware.js";
 
 const router = Router();
 
-router.patch("/claims/approve/:id", approveClaim);
-router.patch("/claims/reject/:id", rejectClaim);
+router.patch("/approve/:id",verifyToken,verifyRole("admin"), approveClaim);
 
 export default router;
