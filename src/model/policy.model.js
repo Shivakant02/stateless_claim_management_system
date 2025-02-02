@@ -18,9 +18,11 @@ const PolicySchema=new mongoose.Schema({
     },
     start_date:{
       type:Date,
+      default:Date.now()
     },
     end_date:{
       type:Date,
+      default:Date.now()+365*24*60*60*1000,
     },
     status:{
       type:String,
@@ -30,7 +32,11 @@ const PolicySchema=new mongoose.Schema({
     policyHolder:{
       type:mongoose.Schema.Types.ObjectId,
       ref:"User",
-    }
+    },
+    isClaimed:{
+      type:Boolean,
+      default:false,
+    },
   },{
   timestamps:true,
 });
