@@ -1,5 +1,5 @@
 import User from "../model/user.model.js";
-import AppError from "../utils/AppError.js";
+import AppError from "../utils/AppError.js"
 
 //cookie options
 const cookieOptions = {
@@ -79,6 +79,7 @@ export const signin = async (req, res,next) => {
 export const getUserProfile = async (req, res,next) => {
   try {
     const userId = req.user.id;
+    // console.log(req.user);
     const user = await User.findById(userId);
     if (!user) {
       return next(new AppError("User not found", 400));
