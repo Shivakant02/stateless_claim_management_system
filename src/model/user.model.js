@@ -84,6 +84,7 @@ UserSchema.methods={
       {
         id: this._id,
         email: this.email,
+        role: this.role,
       },
       process.env.JWT_SECRET_KEY
     )
