@@ -16,15 +16,21 @@ try {
 
   const policyId=req.params.id;
   // console.log(policyId);
+
   
   const policy=await Policy.findById(policyId);
   if(!policy){
     return next(new AppError("Policy not found", 400));
   }
+
+  if(policy.isClaimed){
+    return next(new AppError("Claim already submitted for this policy", 400));
+  }
     
 if(policy.policyHolder.toString()!==userId){
   return next(new AppError("You are not authorized to submit claim for this policy", 401));
 }
+
 
 // console.log(policy);
   const {claimAmount,claimReason}=req.body;
@@ -40,10 +46,13 @@ if(policy.policyHolder.toString()!==userId){
     policyId:policy._id,
     claimAmount:claimAmount,
     claimReason:claimReason,
-    policyHolder:user._id
+    policyHolder:user._id,
   });
 
+  policy.isClaimed=true;
+  await policy.save();
   user.claims.push(claim._id);
+  await claim.save();
   await user.save();
  
   return res.status(201).json({
