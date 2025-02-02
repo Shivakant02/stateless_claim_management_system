@@ -38,3 +38,20 @@ export const purchasePolicy = async(req, res,next) => {
     return next(new AppError(error.message, 500));
   }
 };
+
+// get policy by id 
+export const getPolicyById = async(req, res,next) => {
+  try {
+    const policyId = req.params.id;
+    const policy = await Policy.findById(policyId);
+    if (!policy) {
+      return next(new AppError("policy not found", 404));
+    }
+    return res.status(200).json({
+      message: true,
+      policy,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+}
