@@ -97,3 +97,16 @@ export const getUserProfile = async (req, res,next) => {
   }
 }
   
+
+//logout function
+export const logout = async (req, res,next) => {
+  try {
+    res.clearCookie("token");
+    return res.status(200).json({
+      success: true,
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
