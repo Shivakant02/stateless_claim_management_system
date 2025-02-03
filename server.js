@@ -5,6 +5,7 @@ import adminRoutes from "./src/routes/admin.routes.js";
 import { config } from "dotenv";
 import connectToDatabase from "./src/config/dbConfig.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 
 import userRoutes from "./src/routes/user.routes.js";
 config();
@@ -12,6 +13,13 @@ const app = express();
 
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(
+  cors({ 
+  credentials: true,
+   origin: process.env.FRONTEND_URL 
+   })
+  );
 
 app.get("/", (req, res) => {
   return res.status(200).send("Server is running");
