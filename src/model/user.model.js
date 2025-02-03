@@ -38,6 +38,9 @@ const UserSchema = new Schema(
     dateOfBirth: {
       type: Date,
         },
+        gender:{
+          type:String
+        },
     phoneNumber: {
       type: String,
     },
