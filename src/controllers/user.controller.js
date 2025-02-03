@@ -10,7 +10,7 @@ const cookieOptions = {
 //signup funtion
 export const signup = async (req, res,next) => {
   try {
-    const { fullname, email, password } = req.body;
+    const { fullname, email, password,dateOfBirth,gender } = req.body;
     if (!fullname || !password || !email) {
       return next(new AppError("Please provide all required fields", 400));
     }
@@ -24,6 +24,8 @@ export const signup = async (req, res,next) => {
       email: email,
       password: password,
       fullname: fullname,
+      dateOfBirth:dateOfBirth,
+      gender:gender
     });
 
     await user.save();

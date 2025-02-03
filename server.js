@@ -8,6 +8,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 
 import userRoutes from "./src/routes/user.routes.js";
+import errorMiddleware from "./src/middleware/error.middleware.js";
 config();
 const app = express();
 
@@ -31,6 +32,8 @@ app.use("/api/v1/claims", adminRoutes);
 
 //user routes
 app.use("/api/v1/user", userRoutes);
+
+app.use(errorMiddleware)
 
 const PORT = process.env.PORT;
 app.listen(PORT, async () => {
