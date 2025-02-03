@@ -2,7 +2,7 @@ export class Policy {
   constructor(req) {
     this.id = Math.floor(Math.random() * 1000000);
     this.policyNumber = req.body.policyNumber;
-    this.policyHolderId = req.body.user_id;
+    this.policyHolderId = req.body.user_email;
     this.type = req.body.type;
     this.start_date = req.body.start_date;
     this.valid_till = req.body.valid_till;

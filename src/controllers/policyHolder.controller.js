@@ -18,8 +18,12 @@ export const createPolicyHolder = (req, res) => {
       return res.status(400).send({ message: "All fields are required" });
     }
 
+    if(policyHolder_db[req.body.email]) {
+      return res.status(400).send({ message: "Policy Holder with this email already exists" });
+    }
+
     const policyHolder = new PolicyHolder(req);
-    policyHolder_db[policyHolder.id] = policyHolder;
+    policyHolder_db[policyHolder.email] = policyHolder;
     // console.log(policyHolder_db[policyHolder.id]);
 
     return res.status(201).json({
@@ -35,13 +39,13 @@ export const createPolicyHolder = (req, res) => {
 // function to get a policyHolder
 export const getPolicyHolder = (req, res) => {
   try {
-    if (!policyHolder_db[req.params.id]) {
+    if (!policyHolder_db[req.body.email]) {
       return res.status(404).send({ message: "Policy Holder Not found" });
     }
     return res.status(200).json({
       success: true,
       message: "Policy Holder found successfully",
-      policyHolder: policyHolder_db[req.params.id],
+      policyHolder: policyHolder_db[req.body.email],
     });
   } catch (error) {
     return res.status(500).send({ message: error.message });

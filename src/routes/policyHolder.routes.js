@@ -7,6 +7,6 @@ import {
 const router = Router();
 
 router.post("/createPolicyHolder", createPolicyHolder);
-router.get("/getPolicyHolder/:id", getPolicyHolder);
+router.get("/getPolicyHolder", getPolicyHolder);
 
 export default router;

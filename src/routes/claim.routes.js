@@ -11,9 +11,9 @@ const router = Router();
 
 // Route to handle Claims
 router.post("/submitClaim", submitClaim);
-router.get("/getClaim/:id", getClaim);
-router.get("/claimStatus/:id", getClaimStatus);
-router.put("/updateClaim/:id", updateClaim);
-router.delete("/delete/:user_id/:id", deleteClaim);
+router.get("/getClaim/:policy_id", getClaim);
+router.get("/claimStatus/:policy_id", getClaimStatus);
+router.put("/updateClaim/:policy_id", updateClaim);
+router.delete("/delete/:policy_id", deleteClaim);
 
 export default router;

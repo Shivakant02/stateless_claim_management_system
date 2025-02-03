@@ -2,7 +2,7 @@ import { Policy, policy_db } from "../model/policy.model.js";
 export const createPolicy = (req, res) => {
   try {
     const {
-      user_id,
+      user_email,
       policyNumber,
       type,
       start_date,
@@ -12,8 +12,11 @@ export const createPolicy = (req, res) => {
     } = req.body;
     // console.log(req.body);
 
-    if (!user_id) {
+    if (!user_email) {
       return res.status(404).send({ message: "Please login to buy a policy" });
+    }
+    if(policy_db[policyNumber]) {
+      return res.status(400).send({ message: "Policy with this policy number already exists" });
     }
 
     if (
@@ -28,7 +31,7 @@ export const createPolicy = (req, res) => {
     }
     const policy = new Policy(req);
 
-    policy_db[policy.id] = policy;
+    policy_db[policy.policyNumber] = policy;
     console.log(policy_db[policy.id]);
     return res.status(201).json({
       message: true,
