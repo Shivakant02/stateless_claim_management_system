@@ -34,6 +34,7 @@ if(policy.policyHolder.toString()!==userId){
 
 // console.log(policy);
   const {claimAmount,claimReason}=req.body;
+  // console.log(req.body)
   if (!claimAmount || !claimReason) {
     return next(new AppError("Please provide all required fields", 400));
   }

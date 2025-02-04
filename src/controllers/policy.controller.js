@@ -20,6 +20,7 @@ export const purchasePolicy = async(req, res,next) => {
       type:type,
       coverage:coverage,
       premium:premium,
+      avatar:req.body.avatar||"",
       policyHolder:user._id
     });
 
@@ -30,7 +31,7 @@ export const purchasePolicy = async(req, res,next) => {
 
     
     return res.status(201).json({
-      message: true,
+      success: true,
       message: "policy purchased successfully",
       policy,
     });
@@ -50,6 +51,20 @@ export const getPolicyById = async(req, res,next) => {
     return res.status(200).json({
       message: true,
       policy,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+}
+
+export const getAllPolicies = async(req, res,next) => {
+  try {
+    const user = await User.findById(req.user.id).populate("policies");
+    
+    return res.status(200).json({
+      success: true,
+      message: "All policies fetched successfully",
+      policies:user.policies,
     });
   } catch (error) {
     return next(new AppError(error.message, 500));

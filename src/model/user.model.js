@@ -50,6 +50,8 @@ const UserSchema = new Schema(
     },
     avatar: {
       type: String,
+      default:
+        "https://th.bing.com/th/id/OIP.vvmpWt0qBu3LeBgZuUfmGAHaFt?rs=1&pid=ImgDetMain",
     },
     policies: [
       {
