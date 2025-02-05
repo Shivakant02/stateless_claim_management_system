@@ -29,7 +29,7 @@ const PolicySchema=new mongoose.Schema({
     },
     status:{
       type:String,
-      enum:["active","inactive"],
+      enum:["active","expired","under claim process"],
       default:"active",
     },
     policyHolder:{
@@ -38,10 +38,6 @@ const PolicySchema=new mongoose.Schema({
     },
     avatar:{
       type:String
-    },
-    isClaimed:{
-      type:Boolean,
-      default:false,
     },
   },{
   timestamps:true,

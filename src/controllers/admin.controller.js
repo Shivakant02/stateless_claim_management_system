@@ -1,6 +1,7 @@
 import Claim from '../model/claim.model.js';
 import AppError from '../utils/AppError.js';
 import Policy from '../model/policy.model.js';
+import ClaimHistory from '../model/claimHistory.model.js';
 
 export const approveClaim = async (req, res,next) => {
   try {
@@ -15,11 +16,21 @@ export const approveClaim = async (req, res,next) => {
       return next(new AppError("Claim not found",400));
     }
 
+    if(claim.status==="approved"){
+      return next(new AppError("Claim already approved",400));
+    }
+
     
     claim.status="approved";
+    const claimHistory = await ClaimHistory.findOne();
+    claimHistory.pendingClaims = claimHistory.pendingClaims.filter(id => id.toString() !== claim._id.toString());
+    if (!claimHistory.approvedClaims.includes(claim._id)) {
+      claimHistory.approvedClaims.push(claim._id);
+    }
+    await claimHistory.save();
     await claim.save();
-
     return res.status(200).json({
+      success:true,
       message:"Claim approved successfully",
       claim
     });
@@ -45,18 +56,52 @@ export const rejectClaim = async (req, res,next) => {
       return next(new AppError("Claim not found",400));
     }
 
+    if(claim.status==="rejected"){
+      return next(new AppError("Claim already rejected",400));
+    }
+
     
     claim.status="rejected";
+    const claimHistory = await ClaimHistory.findOne();
+    claimHistory.pendingClaims = claimHistory.pendingClaims.filter(id => id.toString() !== claim._id.toString());
+    if (!claimHistory.rejectedClaims.includes(claim._id)) {
+      claimHistory.rejectedClaims.push(claim._id);
+    }
+    await claimHistory.save();
     await claim.save();
 
     const policyId=claim.policyId.toString();
     const policy=await Policy.findById(policyId);
-    policy.isClaimed=false;
     await policy.save();
-
     return res.status(200).json({
+      success:true,
       message:"Claim rejected successfully",
       claim
+    });
+
+    
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+    
+  }
+}
+
+//get all pending claims
+export const fetchAllClaims = async (req, res,next) => {
+  try {
+    const userId=req.user.id;
+    if(!userId){
+      return next(new AppError("Unauthorized,please login to continue",401));
+    }
+
+  const allClaims=await ClaimHistory.findOne()
+  .populate("pendingClaims")
+  .populate("approvedClaims")
+  .populate("rejectedClaims");
+    return res.status(200).json({
+      success:true,
+      message:"All claims",
+      allClaims:allClaims
     });
 
     

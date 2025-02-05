@@ -28,7 +28,7 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/claim", claimRoutes);
 app.use("/api/v1/policy", policyRoutes);
-app.use("/api/v1/claims", adminRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 //user routes
 app.use("/api/v1/user", userRoutes);

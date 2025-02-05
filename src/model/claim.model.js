@@ -6,6 +6,9 @@ const ClaimSchema=new Schema({
     ref:"Policy",
     required:[true,"Please provide a policy id"],
   },
+  type:{
+    type:String,
+  },
   claimAmount:{
     type:Number,
     required:[true,"Please provide a claim amount"],
