@@ -9,6 +9,7 @@ import cors from "cors";
 
 import userRoutes from "./src/routes/user.routes.js";
 import errorMiddleware from "./src/middleware/error.middleware.js";
+import { sendDemoEmail } from "./src/utils/sendEmails.js";
 config();
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(cookieParser());
 app.use(
   cors({ 
   credentials: true,
-  origin: process.env.FRONTEND_URL
+  origin: [process.env.FRONTEND_URL, "http://localhost:5173"],
    })
   );
 
@@ -32,6 +33,8 @@ app.use("/api/v1/admin", adminRoutes);
 
 //user routes
 app.use("/api/v1/user", userRoutes);
+
+// sendDemoEmail();
 
 app.use(errorMiddleware)
 

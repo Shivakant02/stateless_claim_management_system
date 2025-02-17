@@ -1,5 +1,7 @@
 import User from "../model/user.model.js";
 import AppError from "../utils/AppError.js"
+import { sendPasswordResetEmail } from "../utils/sendEmails.js";
+import crypto from "crypto";
 
 //cookie options
 const cookieOptions = {
@@ -109,6 +111,73 @@ export const logout = async (req, res,next) => {
     return res.status(200).json({
       success: true,
       message: "User logged out successfully",
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
+
+//forgot password function
+export const forgotPassword = async (req, res,next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      return next(new AppError("Please provide email", 400));
+    }
+
+    const user = await User.findOne({ email });
+    if (!user) {
+      return next(new AppError("User not found", 404));
+    }
+
+    const resetToken = await user.generateResetPasswordToken();
+    await user.save();
+
+   await sendPasswordResetEmail(email, resetToken);
+
+    return res.status(200).json({
+      success: true,
+      message: `Reset password link sent to ${email}`,
+      resetToken,
+    });
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
+
+//reset password function
+
+export const resetPassword = async (req, res,next) => {
+  try {
+    const {password } = req.body;
+    const {resetToken}=req.params;
+    if (!resetToken || !password) {
+      return next(new AppError("Please provide all required fields", 400));
+    }
+
+    const hashedToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpire: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return next(new AppError("Invalid or expired reset token", 400));
+    }
+
+    user.password = password;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpire = undefined;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password reset successful",
     });
   } catch (error) {
     return next(new AppError(error.message, 500));

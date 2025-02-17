@@ -2,6 +2,7 @@ import bcryptjs from "bcryptjs";
 import { model, Schema } from "mongoose";
 import jwt from "jsonwebtoken";
 import { config } from "dotenv";
+import crypto from "crypto";
 config();
 
 const UserSchema = new Schema(
@@ -65,6 +66,8 @@ const UserSchema = new Schema(
         ref: "Claim",
       },
     ],
+    resetPasswordToken: String,
+    resetPasswordExpire: Date,
   },
   {
     timestamps: true,
@@ -93,7 +96,16 @@ UserSchema.methods={
       },
       process.env.JWT_SECRET_KEY
     )
-}
+},
+generateResetPasswordToken: async function () {
+  const resetToken = crypto.randomBytes(20).toString("hex");
+  this.resetPasswordToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+  this.resetPasswordExpire = Date.now() + 30 * 60 * 1000;
+  return resetToken;
+},
 }
 
 const User = model("User", UserSchema);
