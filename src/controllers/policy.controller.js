@@ -1,11 +1,15 @@
 import Policy from "../model/policy.model.js";
 import User from "../model/user.model.js";
 import AppError from "../utils/AppError.js";
+import { generatePolicyPDF } from "../utils/generatePDF.js";
+import { sendPolicyDetailsEmail } from "../utils/sendEmails.js";
+// import { writeFileSync } from "fs";
 
 //perchase policy function
 export const purchasePolicy = async(req, res,next) => {
   try {
     const userId = req.user.id;
+    const email=req.user.email;
     const user=await User.findById(userId);
     if(!user){
       return next(new AppError("user does not exist", 404));
@@ -28,7 +32,12 @@ export const purchasePolicy = async(req, res,next) => {
     // await policy.save();
     await user.save();
 
+    const pdfBuffer = await generatePolicyPDF(policy, user);
+    // writeFileSync('policy-details.pdf', pdfBuffer);
 
+// Manually check the generated PDF
+    // console.log('PDF saved locally');
+    await sendPolicyDetailsEmail(email,pdfBuffer)
     
     return res.status(201).json({
       success: true,

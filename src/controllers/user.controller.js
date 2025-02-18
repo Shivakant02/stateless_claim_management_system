@@ -85,7 +85,7 @@ export const signin = async (req, res,next) => {
 export const getUserProfile = async (req, res,next) => {
   try {
     const userId = req.user.id;
-    // console.log(req.user);
+    console.log(req.user);
     const user = await User.findById(userId);
     if (!user) {
       return next(new AppError("User not found", 400));
@@ -138,7 +138,7 @@ export const forgotPassword = async (req, res,next) => {
     return res.status(200).json({
       success: true,
       message: `Reset password link sent to ${email}`,
-      resetToken,
+      resetToken
     });
   } catch (error) {
     return next(new AppError(error.message, 500));
@@ -149,9 +149,10 @@ export const forgotPassword = async (req, res,next) => {
 
 export const resetPassword = async (req, res,next) => {
   try {
-    const {password } = req.body;
+    const {newPassword } = req.body;
     const {resetToken}=req.params;
-    if (!resetToken || !password) {
+    console.log(newPassword,resetToken)
+    if (!resetToken || !newPassword) {
       return next(new AppError("Please provide all required fields", 400));
     }
 
@@ -169,7 +170,7 @@ export const resetPassword = async (req, res,next) => {
       return next(new AppError("Invalid or expired reset token", 400));
     }
 
-    user.password = password;
+    user.password = newPassword;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpire = undefined;
 

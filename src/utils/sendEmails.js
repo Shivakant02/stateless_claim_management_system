@@ -20,7 +20,7 @@ export const sendDemoEmail = async () => {
   }
 };
 
-const sendEmail = async (to, subject, text, html) => {
+const sendEmail = async (to, subject, text, html,attachments = []) => {
     try {
       const msg = {
         to,
@@ -28,6 +28,7 @@ const sendEmail = async (to, subject, text, html) => {
         subject,
         text,
         html,
+        attachments
       };
   
       await sgMail.send(msg);
@@ -39,12 +40,28 @@ const sendEmail = async (to, subject, text, html) => {
 
   //forget email
    export const sendPasswordResetEmail = async (email, resetToken) => {
-    const resetUrl = `https://yourdomain.com/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
     const text = `To reset your password, click on the link below:\n\n${resetUrl}`;
     const html = `<p>To reset your password, click on the link below:</p><a href="${resetUrl}">Reset Password</a>`;
   
     await sendEmail(email, 'Password Reset Request', text, html);
   };
+
+  // purchase policy details
+  export const sendPolicyDetailsEmail=async (email,pdfBuffer)=>{
+    const text = "Thank you for purchasing the policy. Attached is your policy document.";
+    const html = "<p>Thank you for purchasing the policy. Attached is your policy document.</p>";
+
+      const attachments= [
+        {
+          filename: "policy-details.pdf",
+          content: pdfBuffer.toString("base64"), // Convert the buffer to base64 for email attachment
+          encoding: "base64",
+  }];
+
+  await sendEmail(email,"Policy Purchased Successfully",text,html,attachments)
+}
+
   
         
 
