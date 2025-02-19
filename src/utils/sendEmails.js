@@ -62,6 +62,35 @@ const sendEmail = async (to, subject, text, html,attachments = []) => {
   await sendEmail(email,"Policy Purchased Successfully",text,html,attachments)
 }
 
-  
+// claim submitted email
+export const sendClaimSubmittedEmail = async (email, claimId,pdfBuffer) => {
+  const text = `Your claim with ID ${claimId} has been submitted successfully.`;
+  const html = `<p>Your claim with ID ${claimId} has been submitted successfully.</p>`;
+
+  const attachments= [
+    {
+      filename: "claim-details.pdf",
+      content: pdfBuffer.toString("base64"), // Convert the buffer to base64 for email attachment
+      encoding: "base64",
+}];
+
+  await sendEmail(email, 'Claim Submitted successfully', text, html,attachments);
+};
+
+
+//approved claim email
+export const sendClaimApprovedEmail = async (email, claimId) => {
+  const text = `Your claim with ID ${claimId} has been approved successfully.`;
+  const html = `<p>Your claim with ID ${claimId} has been approved successfully.</p>`;
+  await sendEmail(email, 'Claim Approved successfully', text, html);
+}
+
+//rejected claim email
+export const sendClaimRejectedEmail = async (email, claimId) => {
+  const text = `Your claim with ID ${claimId} has been rejected.`;
+  const html = `<p>Your claim with ID ${claimId} has been rejected.</p>`;
+
+  await sendEmail(email, 'Claim Rejected', text, html);
+}
         
 

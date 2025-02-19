@@ -3,6 +3,8 @@ import ClaimHistory from "../model/claimHistory.model.js";
 import Policy from "../model/policy.model.js";
 import User from "../model/user.model.js";
 import AppError from "../utils/AppError.js";
+import { generateClaimPDF } from "../utils/generatePDF.js";
+import { sendClaimSubmittedEmail } from "../utils/sendEmails.js";
 
 export const submitClaim = async (req, res,next) =>{
 try {
@@ -68,6 +70,9 @@ if(policy.policyHolder.toString()!==userId){
 
 //  console.log(claimHistory);
 
+const claimPdf=await generateClaimPDF(claim,user);
+
+await sendClaimSubmittedEmail(user.email,claim._id,claimPdf);
 
   return res.status(201).json({
     success: true,
