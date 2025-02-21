@@ -118,3 +118,65 @@ export const fetchAllClaims = async (req, res,next) => {
     
   }
 }
+
+// approve multiple
+export const approveMultipleClaims = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    if (!userId) {
+      return next(new AppError("Unauthorized, please login to continue", 401));
+    }
+
+    const { claimIds } = req.body; // Expecting an array of claim IDs
+
+    if (!claimIds || !Array.isArray(claimIds) || claimIds.length === 0) {
+      return next(new AppError("Please provide an array of claim IDs", 400));
+    }
+
+    // Find all claims that need to be approved
+    const claims = await Claim.find({ _id: { $in: claimIds } }).populate("policyHolder");
+
+    if (claims.length === 0) {
+      return next(new AppError("No valid claims found", 400));
+    }
+
+    // Filter out already approved claims
+    const claimsToApprove = claims.filter(claim => claim.status !== "approved");
+
+    if (claimsToApprove.length === 0) {
+      return next(new AppError("All provided claims are already approved", 400));
+    }
+
+    // Update claim statuses and collect emails
+    const emails = [];
+    for (let claim of claimsToApprove) {
+      claim.status = "approved";
+      emails.push(claim.policyHolder.email);
+      await claim.save();
+    }
+
+    // Update claim history
+    const claimHistory = await ClaimHistory.findOne();
+    claimHistory.pendingClaims = claimHistory.pendingClaims.filter(
+      id => !claimIds.includes(id.toString())
+    );
+    claimHistory.approvedClaims = [
+      ...new Set([...claimHistory.approvedClaims, ...claimsToApprove.map(claim => claim._id)])
+    ];
+    await claimHistory.save();
+
+    // Send approval emails (optional)
+    for (let i = 0; i < claimsToApprove.length; i++) {
+      await sendClaimApprovedEmail(emails[i], claimsToApprove[i]._id);
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `${claimsToApprove.length} claims approved successfully`,
+      approvedClaims: claimsToApprove
+    });
+
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+  }
+};
