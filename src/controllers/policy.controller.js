@@ -9,13 +9,12 @@ import { sendPolicyDetailsEmail } from "../utils/sendEmails.js";
 export const purchasePolicy = async(req, res,next) => {
   try {
     const userId = req.user.id;
-    const email=req.user.email;
     const user=await User.findById(userId);
     if(!user){
       return next(new AppError("user does not exist", 404));
     }
 
-    const {type,coverage,premium} = req.body;
+    const {type,coverage,premium,email,name,age} = req.body;
     if (!type || !coverage || !premium ) {
       return next(new AppError("Please provide all required fields", 400));
     }
@@ -25,7 +24,10 @@ export const purchasePolicy = async(req, res,next) => {
       coverage:coverage,
       premium:premium,
       avatar:req.body.avatar||"",
-      policyHolder:user._id
+      policyHolder:user._id,
+      email:email,
+      name:name,
+      age:age,
     });
 
     user.policies.push(policy._id);

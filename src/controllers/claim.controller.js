@@ -168,7 +168,7 @@ export const deleteClaim = async (req, res,next) => {
     }
 
     const claimId = req.params.id;
-    const claim = await Claim.findById(claimId);
+    const claim = await Claim.findById(claimId).populate("policyId");
     // const policyId = claim.policyId;
     if (!claim) {
       return next(new AppError("Claim not found", 400));
@@ -181,6 +181,9 @@ export const deleteClaim = async (req, res,next) => {
     await Claim.findByIdAndDelete(claimId);
     await user.claims.pull(claimId);
     await user.save();
+
+    claim.policyId.status = "active";
+    await claim.policyId.save();
 
     return res.status(200).json({
       success: true,

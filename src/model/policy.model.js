@@ -39,6 +39,18 @@ const PolicySchema=new mongoose.Schema({
     avatar:{
       type:String
     },
+    name:{
+      type:String,
+      required:[true,"Please provide a name"],
+    },
+    email:{
+      type:String,
+      required:[true,"Please provide an email address"],
+    },
+    age:{
+      type:Number,
+      required:[true,"Please provide an age"],
+    },
   },{
   timestamps:true,
 });
