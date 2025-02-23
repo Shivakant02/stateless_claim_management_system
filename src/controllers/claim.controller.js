@@ -72,7 +72,7 @@ if(policy.policyHolder.toString()!==userId){
 
 const claimPdf=await generateClaimPDF(claim,user);
 
-await sendClaimSubmittedEmail(user.email,claim._id,claimPdf);
+await sendClaimSubmittedEmail(policy.email,claim._id,claimPdf);
 
   return res.status(201).json({
     success: true,
