@@ -94,6 +94,7 @@ export const getUserProfile = async (req, res,next) => {
     user.password = undefined;
     return res.status(200).json({
       success: true,
+      message: "User profile fetched successfully",
       user,
     });
     

@@ -52,6 +52,7 @@ if(policy.policyHolder.toString()!==userId){
     claimReason:claimReason,
     policyHolder:user._id,
     type:policy.type,
+    email:policy.email,
   });
 
   // policy.isClaimed=true;

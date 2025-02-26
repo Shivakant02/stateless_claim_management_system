@@ -25,7 +25,10 @@ const ClaimSchema=new Schema({
   policyHolder:{
     type:Schema.Types.ObjectId,
     ref:"User",
-  }
+  },
+  email:{
+    type:String,
+  },
 },{
   timestamps:true,
 });

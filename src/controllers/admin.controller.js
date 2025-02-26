@@ -1,6 +1,7 @@
 import Claim from '../model/claim.model.js';
 import AppError from '../utils/AppError.js';
 import Policy from '../model/policy.model.js';
+import User from '../model/user.model.js';
 import ClaimHistory from '../model/claimHistory.model.js';
 import { sendClaimApprovedEmail, sendClaimRejectedEmail } from '../utils/sendEmails.js';
 
@@ -12,7 +13,7 @@ export const approveClaim = async (req, res,next) => {
     }
 
     const claimId=req.params.id
-    const claim=await Claim.findById(claimId).populate("policyHolder");
+    const claim=await Claim.findById(claimId);
     // console.log(claim)
     if(!claim){
       return next(new AppError("Claim not found",400));
@@ -22,7 +23,7 @@ export const approveClaim = async (req, res,next) => {
       return next(new AppError("Claim already approved",400));
     }
 
-    const email=claim.policyHolder.email;
+    const email=claim.email;
     claim.status="approved";
     const claimHistory = await ClaimHistory.findOne();
     claimHistory.pendingClaims = claimHistory.pendingClaims.filter(id => id.toString() !== claim._id.toString());
@@ -180,3 +181,49 @@ export const approveMultipleClaims = async (req, res, next) => {
     return next(new AppError(error.message, 500));
   }
 };
+
+//get all users
+export const fetchAllUsers = async (req, res,next) => {
+  try {
+    const userId=req.user.id;
+    if(!userId){
+      return next(new AppError("Unauthorized,please login to continue",401));
+    }
+
+    const allUsers=await User.find();
+    // console.log(allUsers)
+    return res.status(200).json({
+      success:true,
+      message:"All users",
+      allUsers:allUsers
+    });
+
+    
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+    
+  }
+}
+
+//get all policies
+export const fetchAllPolicies = async (req, res,next) => {
+  try {
+    const userId=req.user.id;
+    if(!userId){
+      return next(new AppError("Unauthorized,please login to continue",401));
+    }
+
+    const allPolicies=await Policy.find();
+    return res.status(200).json({
+      success:true,
+      message:"All policies",
+      allPolicies:allPolicies
+    });
+
+    
+  } catch (error) {
+    return next(new AppError(error.message, 500));
+    
+  }
+}
+
